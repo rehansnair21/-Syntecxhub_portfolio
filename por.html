@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rehan S Nair | Portfolio</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-light: #818cf8;
+    --accent: #06b6d4;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --gray: #64748b;
+    --card-bg: #ffffff;
+    --transition: all 0.3s ease;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  /* Navbar */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--dark);
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: var(--transition);
+  }
+
+  .nav-links a:hover {
+    color: var(--primary);
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+  }
+
+  .menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--dark);
+    border-radius: 2px;
+    transition: var(--transition);
+  }
+
+  /* Hero / About */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 5%;
+    background: linear-gradient(135deg, #eef2ff 0%, #f0fdff 50%, #f8fafc 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before,
+  .hero::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .hero::before {
+    width: 300px;
+    height: 300px;
+    background: var(--primary-light);
+    top: -100px;
+    left: -100px;
+  }
+
+  .hero::after {
+    width: 250px;
+    height: 250px;
+    background: var(--accent);
+    bottom: -80px;
+    right: -80px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: var(--primary);
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+    border: 1px solid #c7d2fe;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero p.role {
+    font-size: 1.2rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .hero p.about-text {
+    max-width: 650px;
+    color: var(--gray);
+    margin: 0 auto 1.8rem;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 2px solid var(--primary);
+  }
+
+  .btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(79,70,229,0.35);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--primary);
+  }
+
+  .btn-outline:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* Section Styling */
+  section {
+    padding: 5rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 3rem;
+  }
+
+  .underline {
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    margin: 0.7rem auto 0;
+    border-radius: 2px;
+  }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card-bg);
+    padding: 2rem 1rem;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: var(--transition);
+    border: 1px solid #eef2ff;
+  }
+
+  .skill-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(79,70,229,0.18);
+    border-color: var(--primary-light);
+  }
+
+  .skill-icon {
+    font-size: 2rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .skill-card h3 {
+    margin-bottom: 0.4rem;
+    color: var(--primary);
+  }
+
+  .skill-card p {
+    color: var(--gray);
+    font-size: 0.85rem;
+  }
+
+  .skill-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    margin-top: 0.8rem;
+    overflow: hidden;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width 1s ease;
+  }
+
+  /* Languages */
+  .languages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .lang-card {
+    background: var(--card-bg);
+    padding: 1.5rem 1rem;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: var(--transition);
+    border: 1px solid #eef2ff;
+  }
+
+  .lang-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 12px 25px rgba(79,70,229,0.18);
+    border-color: var(--primary-light);
+  }
+
+  .lang-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .lang-card h3 {
+    color: var(--primary);
+    font-size: 1rem;
+  }
+
+  /* Projects */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .project-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: var(--transition);
+    border: 1px solid #f1f5f9;
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 30px rgba(79,70,229,0.2);
+  }
+
+  .project-img {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2.2rem;
+    transition: var(--transition);
+  }
+
+  .project-card:hover .project-img {
+    filter: brightness(1.1);
+  }
+
+  .proj-1 { background: linear-gradient(135deg, #6366f1, #06b6d4); }
+  .proj-2 { background: linear-gradient(135deg, #22c55e, #84cc16); }
+  .proj-3 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .proj-4 { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+
+  .project-info {
+    padding: 1.5rem;
+  }
+
+  .project-info h3 {
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+  }
+
+  .project-info p {
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .project-tags span {
+    background: #eef2ff;
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+
+  .project-tags span:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* Contact */
+  .contact {
+    background: var(--card-bg);
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 3rem 2rem;
+  }
+
+  .contact p.intro {
+    color: var(--gray);
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    min-width: 200px;
+    text-decoration: none;
+    color: var(--dark);
+    transition: var(--transition);
+  }
+
+  .contact-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-light);
+    box-shadow: 0 10px 20px rgba(79,70,229,0.12);
+  }
+
+  .contact-card .c-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .contact-card h4 {
+    margin-bottom: 0.3rem;
+    color: var(--primary);
+    font-size: 0.95rem;
+  }
+
+  .contact-card p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.9rem;
+    word-break: break-all;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: var(--transition);
+  }
+
+  .social-links a:hover {
+    transform: translateY(-5px) rotate(8deg);
+    box-shadow: 0 8px 20px rgba(79,70,229,0.35);
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--dark);
+    color: #cbd5e1;
+    font-size: 0.9rem;
+  }
+
+  footer span {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 0;
+      transform: translateY(-150%);
+      opacity: 0;
+      transition: var(--transition);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    }
+
+    .nav-links.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .menu-toggle {
+      display: flex;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+    }
+
+    .hero p.role {
+      font-size: 1rem;
+    }
+
+    section {
+      padding: 3.5rem 6%;
+    }
+
+    .contact-card {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Rehan S Nair</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#languages">Languages</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="menu-toggle" id="menuToggle">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<section class="hero" id="about">
+  <div class="hero-content">
+    <span class="badge">MCA Student</span>
+    <h1>Hi, I'm <span>Rehan S Nair</span></h1>
+    <p class="role">Aspiring Software Developer | Full Stack Enthusiast</p>
+    <p class="about-text">
+      I'm a Master of Computer Applications (MCA) student passionate about building
+      web applications and exploring full-stack development. I enjoy turning ideas
+      into functional websites using technologies like HTML, CSS, PHP, Java, Python and SQL,
+      and I love taking on new projects that challenge my problem-solving skills.
+    </p>
+    <div class="btn-group">
+      <a href="#contact" class="btn">Get In Touch</a>
+      <a href="#projects" class="btn btn-outline">View Projects</a>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="section-title">Skills <span class="underline"></span></h2>
+  <p class="section-subtitle">Technologies I work with</p>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon">🌐</div>
+      <h3>HTML</h3>
+      <p>Structuring web pages</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🎨</div>
+      <h3>CSS</h3>
+      <p>Styling & responsive design</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🐘</div>
+      <h3>PHP</h3>
+      <p>Server-side scripting</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">☕</div>
+      <h3>Java</h3>
+      <p>OOP & Spring Boot</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🗄️</div>
+      <h3>SQL & DBMS</h3>
+      <p>Database design & queries</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🐍</div>
+      <h3>Python</h3>
+      <p>Scripting & problem solving</p>
+      <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="languages">
+  <h2 class="section-title">Languages I'm Learning <span class="underline"></span></h2>
+  <p class="section-subtitle">Programming languages I'm exploring and practicing</p>
+  <div class="languages-grid">
+    <div class="lang-card">
+      <div class="lang-icon">🔤</div>
+      <h3>C</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">➕</div>
+      <h3>C++</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">🌐</div>
+      <h3>HTML</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">🎨</div>
+      <h3>CSS</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">🐘</div>
+      <h3>PHP</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">☕</div>
+      <h3>Java</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">⚡</div>
+      <h3>JavaScript</h3>
+    </div>
+    <div class="lang-card">
+      <div class="lang-icon">🐍</div>
+      <h3>Python</h3>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="section-title">Projects <span class="underline"></span></h2>
+  <p class="section-subtitle">A few things I've built</p>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-img proj-1">🎬</div>
+      <div class="project-info">
+        <h3>Movie Review System</h3>
+        <p>A WordPress-based website where users can browse movies, read details, and post reviews and ratings.</p>
+        <div class="project-tags">
+          <span>WordPress</span><span>PHP</span><span>MySQL</span>
+        </div>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img proj-2">🥦</div>
+      <div class="project-info">
+        <h3>AgroFresh - Fruits & Vegetables Store</h3>
+        <p>An e-commerce style website for selling fresh fruits and vegetables online with product listings and ordering.</p>
+        <div class="project-tags">
+          <span>HTML</span><span>CSS</span><span>PHP</span><span>SQL</span>
+        </div>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img proj-3">⏱️</div>
+      <div class="project-info">
+        <h3>Time Calculator</h3>
+        <p>A Java Spring Boot application that performs time calculations, built with backend logic and REST APIs.</p>
+        <div class="project-tags">
+          <span>Java</span><span>Spring Boot</span>
+        </div>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img proj-4">🐾</div>
+      <div class="project-info">
+        <h3>Pet Products Sales Website</h3>
+        <p>A website for showcasing and selling pet products, including categories, product details, and cart functionality.</p>
+        <div class="project-tags">
+          <span>HTML</span><span>CSS</span><span>PHP</span><span>SQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2 class="section-title">Contact <span class="underline"></span></h2>
+  <p class="section-subtitle">Let's connect</p>
+  <div class="contact">
+    <p class="intro">Feel free to reach out for collaborations, internships, or just a friendly chat. I'm always open to discussing new opportunities!</p>
+    <div class="contact-info">
+      <a href="mailto:rehansnair@gmail.com" class="contact-card">
+        <span class="c-icon">✉️</span>
+        <h4>Email</h4>
+        <p>rehansnair@gmail.com</p>
+      </a>
+      <a href="tel:+917907243685" class="contact-card">
+        <span class="c-icon">📞</span>
+        <h4>Phone</h4>
+        <p>+91 7907243685</p>
+      </a>
+      <a href="https://www.linkedin.com/in/rehan-s-nair-15b34a320" target="_blank" class="contact-card">
+        <span class="c-icon">💼</span>
+        <h4>LinkedIn</h4>
+        <p>Rehan S Nair</p>
+      </a>
+    </div>
+    <div class="social-links">
+      <a href="https://www.linkedin.com/in/rehan-s-nair-15b34a320" target="_blank" title="LinkedIn">in</a>
+      <a href="mailto:rehansnair@gmail.com" title="Email">@</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 <span>Rehan S Nair</span>. All rights reserved.
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+    });
+  });
+</script>
+
+</body>
+</html>
