@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Taskr</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0d0608;
+  --glass:rgba(255,255,255,0.045);
+  --glass-border:rgba(255,180,120,0.12);
+  --glass-hover:rgba(255,180,120,0.07);
+  --text:#fff0e8;
+  --muted:#7a5a50;
+  --muted2:#c09080;
+  --done:#3a2020;
+  --v1:#ff6b35;  /* coral  */
+  --v2:#f7c59f;  /* amber  */
+  --v3:#ff3cac;  /* rose   */
+  --red:#ff3c3c;
+  --r:14px;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:48px 16px 100px;
+  overflow-x:hidden;
+}
+
+/* ── ambient blobs ── */
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;
+}
+body::before{
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(255,107,53,.2) 0%,transparent 70%);
+  top:-180px;left:-160px;
+}
+body::after{
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(255,60,172,.16) 0%,transparent 70%);
+  bottom:-100px;right:-100px;
+}
+
+.container{position:relative;z-index:1;width:100%;max-width:520px}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;gap:28px;
+  margin-bottom:36px;
+}
+
+/* progress ring */
+.ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{stroke:rgba(255,255,255,0.06)}
+.ring-fill{
+  stroke:url(#grad);
+  stroke-linecap:round;
+  stroke-dasharray:220;
+  stroke-dashoffset:220;
+  transition:stroke-dashoffset 0.7s cubic-bezier(.4,0,.2,1);
+}
+.ring-pct{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.1rem;line-height:1;
+  background:linear-gradient(135deg,var(--v3),var(--v1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.ring-pct small{font-size:0.48rem;font-weight:700;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:2px;letter-spacing:.08em;text-transform:uppercase}
+
+.ring-wrap.all-done .ring-fill{animation:pulse-ring 1.6s ease-in-out infinite}
+@keyframes pulse-ring{0%,100%{filter:drop-shadow(0 0 4px #ff3cac)}50%{filter:drop-shadow(0 0 16px #ff6b35)}}
+
+.header-text{}
+h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2rem,5vw,2.6rem);letter-spacing:-.05em;line-height:1;
+  background:linear-gradient(110deg,#fff8f2 20%,var(--v3) 55%,var(--v1) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sub{margin-top:6px;font-size:.8rem;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+#stats-txt{margin-top:4px;font-size:.82rem;color:var(--muted)}
+#stats-txt b{color:var(--text);font-weight:600}
+
+/* ── INPUT ── */
+.add-row{
+  display:flex;gap:10px;
+  background:var(--glass);
+  border:1.5px solid var(--glass-border);
+  border-radius:var(--r);
+  padding:6px 6px 6px 18px;
+  backdrop-filter:blur(12px);
+  margin-bottom:18px;
+  transition:border-color .2s;
+}
+.add-row:focus-within{border-color:rgba(255,107,53,.55)}
+
+#new-task{
+  flex:1;background:transparent;border:none;outline:none;
+  font-size:.95rem;color:var(--text);font-family:'Inter',sans-serif;
+}
+#new-task::placeholder{color:var(--muted)}
+
+.btn-add{
+  background:linear-gradient(135deg,var(--v3),var(--v1));
+  border:none;border-radius:10px;
+  width:42px;height:42px;
+  font-size:1.3rem;font-weight:900;
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .15s,transform .1s;
+  flex-shrink:0;line-height:1;
+}
+.btn-add:hover{opacity:.88}
+.btn-add:active{transform:scale(.93)}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:8px;margin-bottom:20px}
+.chip{
+  padding:6px 16px;border-radius:99px;
+  border:1.5px solid var(--glass-border);
+  background:var(--glass);backdrop-filter:blur(8px);
+  color:var(--muted2);font-size:.76rem;font-weight:600;
+  cursor:pointer;letter-spacing:.05em;text-transform:uppercase;
+  transition:all .18s;
+}
+.chip.active{
+  background:linear-gradient(135deg,rgba(255,60,172,.2),rgba(255,107,53,.2));
+  border-color:rgba(255,107,53,.55);color:#fff;
+}
+.chip:hover:not(.active){color:var(--text);border-color:rgba(255,255,255,.2)}
+
+/* ── TASK LIST ── */
+#task-list{display:flex;flex-direction:column;gap:8px}
+
+.task-item{
+  display:flex;align-items:center;gap:13px;
+  background:var(--glass);
+  border:1.5px solid var(--glass-border);
+  border-radius:var(--r);
+  padding:15px 12px 15px 16px;
+  backdrop-filter:blur(16px);
+  position:relative;overflow:hidden;
+  animation:taskIn .25s cubic-bezier(.34,1.56,.64,1) both;
+  transition:border-color .2s,background .2s,transform .15s,box-shadow .2s;
+}
+.task-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--v3),var(--v1));
+  opacity:0;transition:opacity .2s;border-radius:3px 0 0 3px;
+}
+.task-item:hover{
+  background:var(--glass-hover);
+  border-color:rgba(255,255,255,.15);
+  transform:translateX(3px);
+  box-shadow:0 4px 32px rgba(0,0,0,.35);
+}
+.task-item:hover::before{opacity:1}
+
+.task-item.done{opacity:.45}
+.task-item.done .task-text{text-decoration:line-through;color:var(--done)}
+.task-item.done::before{background:var(--muted)}
+
+.task-item.removing{
+  animation:taskOut .28s cubic-bezier(.4,0,1,1) forwards;
+}
+@keyframes taskIn{
+  from{opacity:0;transform:translateY(-10px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+@keyframes taskOut{
+  to{opacity:0;transform:translateX(20px) scale(.95);max-height:0;margin:0;padding:0}
+}
+
+/* check btn */
+.check-btn{
+  width:24px;height:24px;flex-shrink:0;
+  border-radius:7px;cursor:pointer;
+  border:2px solid rgba(255,255,255,.15);
+  background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;color:transparent;
+  transition:all .18s;position:relative;overflow:hidden;
+}
+.check-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--v3),var(--v1));
+  opacity:0;transition:opacity .18s;
+}
+.check-btn:hover{border-color:var(--v3)}
+.task-item.done .check-btn{
+  border-color:transparent;
+}
+.task-item.done .check-btn::before{opacity:1}
+.task-item.done .check-btn .chk-icon{position:relative;z-index:1;color:#fff;font-size:.8rem}
+
+.task-text{
+  flex:1;font-size:.92rem;line-height:1.5;word-break:break-word;
+  font-weight:400;
+}
+
+.actions{display:flex;gap:2px;flex-shrink:0}
+.icon-btn{
+  background:transparent;border:none;cursor:pointer;
+  font-size:.95rem;padding:6px 7px;border-radius:8px;
+  transition:background .15s,transform .1s;line-height:1;
+}
+.icon-btn:hover{background:rgba(255,255,255,.08);transform:scale(1.12)}
+.icon-btn.delete:hover{background:rgba(255,68,102,.15)}
+
+/* ── EMPTY ── */
+.empty{
+  text-align:center;padding:56px 0;
+  animation:taskIn .3s ease;
+}
+.empty-icon{font-size:2.8rem;margin-bottom:14px;display:block;
+  animation:float 3s ease-in-out infinite}
+.empty p{color:var(--muted);font-size:.9rem}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ── FOOTER ── */
+.footer-row{display:flex;justify-content:flex-end;margin-top:16px}
+.btn-clear{
+  background:transparent;
+  border:1.5px solid rgba(255,68,102,.0);
+  color:var(--muted);border-radius:8px;
+  padding:7px 14px;font-size:.78rem;cursor:pointer;
+  transition:all .18s;letter-spacing:.03em;
+  font-family:'Inter',sans-serif;
+}
+.btn-clear:hover:not(:disabled){border-color:rgba(255,68,102,.5);color:var(--red)}
+.btn-clear:disabled{opacity:.25;cursor:default}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:rgba(25,12,10,.92);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:99px;padding:9px 20px;
+  font-size:.82rem;color:var(--text);
+  opacity:0;transition:opacity .25s,transform .25s;
+  pointer-events:none;z-index:100;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:420px){
+  header{gap:18px}
+  .ring-wrap{width:64px;height:64px}
+  .ring-pct{font-size:.9rem}
+  h1{font-size:1.7rem}
+  .sub{display:none}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="ring-wrap" id="ring-wrap">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff3cac"/>
+            <stop offset="50%" stop-color="#ff6b35"/>
+            <stop offset="100%" stop-color="#f7c59f"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="40" cy="40" r="35" fill="none" stroke-width="5"/>
+        <circle class="ring-fill" id="ring-fill" cx="40" cy="40" r="35" fill="none" stroke-width="5"/>
+      </svg>
+      <div class="ring-pct"><span id="ring-num">0%</span><small>done</small></div>
+    </div>
+    <div class="header-text">
+      <h1>Taskr</h1>
+      <div class="sub">Focus. Ship. Repeat.</div>
+      <div id="stats-txt">No tasks yet</div>
+    </div>
+  </header>
+
+  <!-- ADD -->
+  <div class="add-row">
+    <input id="new-task" type="text" placeholder="What needs doing?" maxlength="120" autocomplete="off"/>
+    <button class="btn-add" id="add-btn" title="Add task">+</button>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="active">Active</button>
+    <button class="chip" data-filter="done">Done</button>
+  </div>
+
+  <!-- LIST -->
+  <div id="task-list"></div>
+
+  <!-- FOOTER -->
+  <div class="footer-row">
+    <button class="btn-clear" id="clear-btn">🗑 Clear completed</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'taskr_v2';
+let tasks  = load();
+let filter = 'all';
+
+function load(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch{return[]}}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* ── toast ── */
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2000);
+}
+
+/* ── progress ring ── */
+function updateRing(){
+  const total=tasks.length, done=tasks.filter(t=>t.done).length;
+  const pct=total?Math.round((done/total)*100):0;
+  const circ=220, offset=circ-(pct/100)*circ;
+  document.getElementById('ring-fill').style.strokeDashoffset=offset;
+  document.getElementById('ring-num').textContent=pct+'%';
+  const wrap=document.getElementById('ring-wrap');
+  wrap.classList.toggle('all-done', total>0 && done===total);
+
+  const s=document.getElementById('stats-txt');
+  const active=total-done;
+  if(!total){s.textContent='No tasks yet'}
+  else if(!active){s.innerHTML='<b>All done!</b> 🎉'}
+  else{s.innerHTML=`<b>${active}</b> left · <b>${done}</b> done`}
+
+  document.getElementById('clear-btn').disabled=done===0;
+}
+
+/* ── render ── */
+function render(){
+  const list=document.getElementById('task-list');
+  list.innerHTML='';
+
+  const vis=tasks.filter(t=>
+    filter==='all'?true:
+    filter==='active'?!t.done:t.done
+  );
+
+  if(!vis.length){
+    const msgs={
+      all:['🌌','Nothing here — add your first task!'],
+      active:['✨','You\'re all caught up!'],
+      done:['🚀','No completed tasks yet.']
+    };
+    const [icon,txt]=msgs[filter];
+    list.innerHTML=`<div class="empty"><span class="empty-icon">${icon}</span><p>${txt}</p></div>`;
+  } else {
+    vis.forEach(t=>list.appendChild(makeItem(t)));
+  }
+  updateRing();
+}
+
+function makeItem(t){
+  const div=document.createElement('div');
+  div.className='task-item'+(t.done?' done':'');
+  div.dataset.id=t.id;
+  div.innerHTML=`
+    <button class="check-btn" title="${t.done?'Mark active':'Mark done'}">
+      <span class="chk-icon">${t.done?'✓':''}</span>
+    </button>
+    <span class="task-text">${esc(t.text)}</span>
+    <div class="actions">
+      <button class="icon-btn edit" title="Edit">✏️</button>
+      <button class="icon-btn delete" title="Delete">🗑️</button>
+    </div>`;
+  div.querySelector('.check-btn').addEventListener('click',()=>toggle(t.id));
+  div.querySelector('.edit').addEventListener('click',()=>editTask(t.id));
+  div.querySelector('.delete').addEventListener('click',()=>deleteTask(t.id,div));
+  return div;
+}
+
+/* ── actions ── */
+function addTask(text){
+  text=text.trim();if(!text)return;
+  tasks.unshift({id:uid(),text,done:false});
+  save();render();
+  toast('Task added ✓');
+}
+
+function toggle(id){
+  const t=tasks.find(t=>t.id===id);
+  if(!t)return;
+  t.done=!t.done;
+  save();render();
+  if(t.done) toast('Marked complete ✓');
+}
+
+function deleteTask(id, el){
+  if(el){
+    el.classList.add('removing');
+    setTimeout(()=>{tasks=tasks.filter(t=>t.id!==id);save();render();},260);
+  } else {
+    tasks=tasks.filter(t=>t.id!==id);save();render();
+  }
+  toast('Task removed');
+}
+
+function editTask(id){
+  const t=tasks.find(t=>t.id===id);if(!t)return;
+  const li=document.querySelector(`.task-item[data-id="${id}"]`);
+  const span=li.querySelector('.task-text');
+  const inp=document.createElement('input');
+  inp.type='text';inp.value=t.text;
+  inp.style.cssText='flex:1;background:transparent;border:none;border-bottom:1.5px solid rgba(255,107,53,.7);color:inherit;font-size:.92rem;font-family:inherit;outline:none;padding:2px 0;';
+  span.replaceWith(inp);inp.focus();inp.select();
+  const commit=()=>{const v=inp.value.trim();if(v)t.text=v;save();render();toast('Saved ✓')};
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter')commit();
+    if(e.key==='Escape'){save();render();}
+  });
+  inp.addEventListener('blur',commit);
+}
+
+/* ── events ── */
+document.getElementById('add-btn').addEventListener('click',()=>{
+  const inp=document.getElementById('new-task');
+  addTask(inp.value);inp.value='';inp.focus();
+});
+document.getElementById('new-task').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const inp=e.target;addTask(inp.value);inp.value=''}
+});
+document.getElementById('clear-btn').addEventListener('click',()=>{
+  const n=tasks.filter(t=>t.done).length;
+  tasks=tasks.filter(t=>!t.done);
+  save();render();toast(`Cleared ${n} completed task${n>1?'s':''}`);
+});
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    filter=chip.dataset.filter;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
